@@ -64,7 +64,7 @@ def gather_for_freq(metricas_dir: Path, freq_tag: str) -> Dict[str, np.ndarray]:
 
 def plot_all(metricas_dir: Path, out_file: Path, show: bool = False) -> None:
     labels = ["RB-OFDMA", "5GL-OFDMA", "Sym-OFDMA", "5GL-TDMA"]
-    fig, axes = plt.subplots(1, 3, figsize=(15, 6), sharey=True)
+    fig, axes = plt.subplots(1, 3, figsize=(15, 6))  # Removido sharey=True para ticks independentes
 
     for ax, freq in zip(axes, FREQS):
         data = gather_for_freq(metricas_dir, freq)
@@ -83,12 +83,12 @@ def plot_all(metricas_dir: Path, out_file: Path, show: bool = False) -> None:
         # For boxplot, if an array is empty replace with [np.nan] so labels align but will not show
         plot_data = [arr if arr.size else np.array([np.nan]) for arr in arrays_ms]
 
-        ax.boxplot(plot_data, labels=labels, showfliers=False)
+        ax.boxplot(plot_data, tick_labels=labels, showfliers=False)  # Usar tick_labels em vez de labels (deprecated)
         ax.set_title(freq)
         ax.set_ylabel("Latency (ms)")
         ax.grid(True)
 
-    plt.suptitle("") #"Packet PDCP Delay Comparison" / Comparativo de Latência
+    plt.suptitle("Comparativo de Packet PDCP Delay")  # Adicionado título
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     out_file.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_file)
